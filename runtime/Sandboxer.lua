@@ -18,22 +18,34 @@ local E = getfenv()
 local Sandbox = {}
 Sandbox.Env = {}
 
-function Sandbox.LoadIntoEnv(Key, Value)
+function Sandbox.LoadIntoEnv(Key, Value, Table)
+	Table = Table or Sandbox.Env
 	if type(Value) == "table" then
+		Table[Key] = {}
 		for k, v in pairs(Value) do
-			Sandbox.LoadIntoEnv(k, v)
+			Sandbox.LoadIntoEnv(k, v, Table[Key])
 		end
 		return
 	end
-	Sandbox.Env[Key] = Value
+	Table[Key] = Value
 end
 
 function Sandbox.RunSandbox(Str)
-	return loadstr(Str, Sandbox.Env)
+	return loadstr(Str, Sandbox.Env)()
+end
+
+function Sandbox.LoadSandbox(Func)
+	return setfenv(Func, Sandbox.Env)()
 end
 
 for _, v in pairs(DefaultLibraries) do
 	Sandbox.LoadIntoEnv(v, E[v])
+end
+
+for _, v in pairs(APIs:GetChildren()) do
+	if v:IsA("ModuleScript") then
+		Sandbox.LoadIntoEnv(v.Name, require(v))
+	end
 end
 
 return Sandbox

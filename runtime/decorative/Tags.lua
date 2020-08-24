@@ -12,7 +12,7 @@ local Tags = {
 		DisplayName = "Tester"
 	}
 }
-local PlayerTags = { -- should probably use userids but im lazy
+local PlayerTags = {
 	["djsportscar"] = "Dev",
 	["dogeman124567"] = "Dev",
 	["MrTacobelllll"] = "Dev",
